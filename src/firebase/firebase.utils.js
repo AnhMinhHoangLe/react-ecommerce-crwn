@@ -18,10 +18,11 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return
   const userRef = firestore.doc(`users/${userAuth.uid}`) // go to the user profile by UID
   const snapShot = await userRef.get() // get the snapshot of the user from console
+  // console.log(snapshot.data())
   if (!snapShot.exists) {
     // create user in database if it does not exist
     const { displayName, email } = userAuth
-    const createAt = new Date() 
+    const createAt = new Date()
     try {
       // get the data set 
       await userRef.set({ displayName, email, createAt, ...additionalData })
@@ -31,6 +32,40 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     }
   }
   return userRef
+}
+
+//  Add the items and collections to the database
+export const addCollectionsAndDocument = async (collectionKey, objectsToAdd) => {
+  const collectionRef = firestore.collection(collectionKey)
+  // console.log(collectionRef)
+  const batch = firestore.batch() // batch is to group all our calls together into one big request
+  objectsToAdd.forEach(obj => {
+    // const newDocRef = collectionRef.doc(obj.title)
+    const newDocRef = collectionRef.doc(obj.title)
+
+    // console.log(newDocRef)
+    batch.set(newDocRef, obj)
+  }) // loop over the objects to add array using for each method 
+
+  return await batch.commit()
+}
+
+export const convertCollectionsSnapshotToMap = (collections) => {
+  const transformedCollection = collections.docs.map(doc => {
+    const { title, items } = doc.data()
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items
+    }
+  })
+  // console.log(transformedCollection)
+  transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection
+    return accumulator
+  }, {})
+
 }
 firebase.initializeApp(config);
 export const auth = firebase.auth();
