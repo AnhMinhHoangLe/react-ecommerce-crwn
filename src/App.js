@@ -9,7 +9,7 @@ import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import SignInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import CheckoutPage from "./pages/checkout/checkout.component";
-
+import contactPage from "./pages/contact/contact.component";
 import Header from "./components/header/header.component";
 
 // import { auth, createUserProfileDocument, addCollectionsAndDocument } from './firebase/firebase.utils';
@@ -73,6 +73,8 @@ class App extends Component {
                             )
                         }
                     />
+                    <Route exact path='/contact' component={contactPage} />
+
                 </Switch>
             </div>
         );
@@ -81,7 +83,6 @@ class App extends Component {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
-    // collectionsArray: selectCollectionsForPreview
 });
 
 const mapDispatchToProps = (dispatch) => ({
